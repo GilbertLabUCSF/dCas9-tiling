@@ -106,8 +106,9 @@ def findGuideInOffset(geneName: str, targetSeq: str,
     return sgRNA, sgRNAInfo
 
 
-def findAllGuidesInRanges(geneName, chrom, rangeList, genomeDict, endBuffer=0, sgRNALength=20):
+def findAllGuidesInRanges(geneName, chrom, rangeList, genomeDict, endBuffer=0, sgRNALength=20, PAM='NGG', outFormat=None):
     """
+    [x] Rearranges the columns and outputs a guidescan friendly table
     [ ] Rearranges the columns and outputs a BED file for viewing
 
     Parameters
@@ -118,6 +119,8 @@ def findAllGuidesInRanges(geneName, chrom, rangeList, genomeDict, endBuffer=0, s
     genomeDict : dict
     endBuffer : int
     sgRNALength : int
+    PAM: str
+    outFormat: str
     """
     Library = []
     LibraryInfo = []
@@ -139,7 +142,16 @@ def findAllGuidesInRanges(geneName, chrom, rangeList, genomeDict, endBuffer=0, s
         'sgId', 'geneName', 'length', 'pam coordinate', 'pass_score', 'position', 'strand'
     ]).set_index('sgId')
 
-    return LibraryTable, LibraryInfoTable
+    if outFormat == "guidescan":
+        # id, sequence, pam, chromosome, position, sense
+        guidescanTable = pd.concat([LibraryInfoTable, LibraryTable[["sequence"]]], axis=1)
+        guidescanTable["chromosome"] = chrom
+        guidescanTable["pam"] = PAM
+        guidescanTable = guidescanTable[['sgId', 'sequence', 'pam', 'chromosome', 'position', 'strand']]
+        guidescanTable.rename(columns = {'sgId':'id', "strand":'sense'},inplace=True)
+        return guidescanTable
+    else:
+        return LibraryTable, LibraryInfoTable
 
 
 def buildGuidePairs(LibraryInfoTable, footPrintRange=None):
