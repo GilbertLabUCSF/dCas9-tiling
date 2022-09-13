@@ -55,15 +55,15 @@ def findGuideInOffset(geneName: str, targetSeq: str,
             and posOffset + 3 + sgRNALength < rangeLength \
             and 'N' not in \
             targetSeq[
-                posOffset:posOffset + 3 + sgRNALength
+            posOffset:posOffset + 3 + sgRNALength
             ].upper() \
             and 'AAAA' not in \
             targetSeq[
-                posOffset:posOffset + 3 + sgRNALength
+            posOffset:posOffset + 3 + sgRNALength
             ].upper() \
             and 'AA' not in \
             targetSeq[
-                posOffset + sgRNALength:posOffset + 3 + sgRNALength
+            posOffset + sgRNALength:posOffset + 3 + sgRNALength
             ].upper() \
             and \
             20 < GC(targetSeq[posOffset:posOffset + 3 + sgRNALength]) < 90:
@@ -75,15 +75,15 @@ def findGuideInOffset(geneName: str, targetSeq: str,
             and posOffset - 3 - sgRNALength >= 0 \
             and 'N' not in \
             targetSeq[
-                posOffset + 1 - 3 - sgRNALength:posOffset + 1
+            posOffset + 1 - 3 - sgRNALength:posOffset + 1
             ].upper() \
             and 'TTTT' not in \
             targetSeq[
-                posOffset + 1 - 3 - sgRNALength:posOffset + 1
+            posOffset + 1 - 3 - sgRNALength:posOffset + 1
             ].upper() \
             and 'TT' not in \
             targetSeq[
-                posOffset + 1 - 3:posOffset + 1
+            posOffset + 1 - 3:posOffset + 1
             ].upper() \
             and \
             20 < GC(targetSeq[posOffset + 1 - 3 - sgRNALength:posOffset + 1]) < 90:
@@ -106,7 +106,8 @@ def findGuideInOffset(geneName: str, targetSeq: str,
     return sgRNA, sgRNAInfo
 
 
-def findAllGuidesInRanges(geneName, chrom, rangeList, genomeDict, endBuffer=0, sgRNALength=20, PAM='NGG', outFormat=None):
+def findAllGuidesInRanges(geneName, chrom, rangeList, genomeDict, endBuffer=0, sgRNALength=20, PAM='NGG',
+                          outFormat=None):
     """
     [x] Rearranges the columns and outputs a guidescan friendly table
     [ ] Rearranges the columns and outputs a BED file for viewing
@@ -144,11 +145,11 @@ def findAllGuidesInRanges(geneName, chrom, rangeList, genomeDict, endBuffer=0, s
 
     if outFormat == "guidescan":
         # id, sequence, pam, chromosome, position, sense
-        guidescanTable = pd.concat([LibraryInfoTable, LibraryTable[["sequence"]]], axis=1)
+        guidescanTable = pd.concat([LibraryInfoTable, LibraryTable[["sequence"]]], axis=1).reset_index()
         guidescanTable["chromosome"] = chrom
         guidescanTable["pam"] = PAM
         guidescanTable = guidescanTable[['sgId', 'sequence', 'pam', 'chromosome', 'position', 'strand']]
-        guidescanTable.rename(columns = {'sgId':'id', "strand":'sense'},inplace=True)
+        guidescanTable.rename(columns={'sgId': 'id', "strand": 'sense'}, inplace=True)
         return guidescanTable
     else:
         return LibraryTable, LibraryInfoTable
